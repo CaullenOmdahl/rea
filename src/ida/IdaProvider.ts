@@ -101,12 +101,15 @@ export class IdaProvider implements AnalysisProviderCandidate {
       target_kind: target.kind,
       target_format: target.format,
     };
-    if (target.kind === "executable" && target.architecture === "mips")
+    if (
+      target.kind === "executable" &&
+      (target.architecture === "mips" || target.architecture === "xtensa")
+    )
       return {
         status: "unsupported",
         code: "architecture_unsupported",
         reason:
-          "REA's IDA adapter has no verified MIPS lane. Select a supported Ghidra profile instead.",
+          "REA's IDA adapter has no verified MIPS or Xtensa lane. Select a supported Ghidra profile instead.",
         diagnostics,
       };
     return target.kind === "executable"

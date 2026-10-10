@@ -150,6 +150,7 @@
     "verify:apktool": "npm run build:cached && node scripts/verify-apktool.mjs",
     "verify:adb": "npm run build:cached && node scripts/verify-adb.mjs",
     "verify:ghidra": "npm run build:cached && node scripts/verify-real-ghidra.mjs",
+    "verify:ghidra:xtensa": "npm run build:cached && python3 -m unittest discover -s tests/conformance/esp32 -p 'test_*.py' && node scripts/verify-real-ghidra-xtensa.mjs",
     "verify:ghidra:mips": "npm run build:cached && node scripts/verify-real-ghidra-mips.mjs",
     "verify:ghidra:swift": "npm run build:cached && node scripts/verify-real-ghidra-swift.mjs",
     "verify:ida": "npm run build:cached && node scripts/verify-real-ida.mjs",
