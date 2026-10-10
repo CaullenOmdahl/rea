@@ -144,6 +144,7 @@ export const createGhidraProviderClient = (input: {
       ),
       ...(target.format === "dos-mz" ? { dosMz: true } : {}),
       ...(target.format === "dos-com" ? { dosCom: true } : {}),
+      ...(target.architecture === "xtensa" ? { xtensa: true } : {}),
       platform: installation.platform,
       ...(extensions.length === 0 ? {} : { analysisExtensions: extensions }),
     }),
@@ -163,7 +164,12 @@ export const createGhidraProviderClient = (input: {
           expectedLanguageId: "x86:LE:16:Real Mode",
           expectedCompilerSpecId: "default",
         }
-      : {}),
+      : target.architecture === "xtensa"
+        ? {
+            expectedLanguageId: "Xtensa:LE:32:default",
+            expectedCompilerSpecId: "default",
+          }
+        : {}),
     ...(context === undefined ? {} : { runId: context.runId }),
     logger: logger.child({ layer: "ghidra-bridge" }),
   });

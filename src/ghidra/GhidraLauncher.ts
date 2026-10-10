@@ -85,6 +85,7 @@ export interface GhidraHeadlessLauncherOptions {
   /** Select the admitted 16-bit real-mode MZ import instead of auto-detection. */
   readonly dosMz?: true;
   readonly dosCom?: true;
+  readonly xtensa?: true;
   readonly analysisExtensions?: readonly GhidraExtension[];
   /** Spawn seam for provider-boundary lifecycle tests. */
   readonly spawnProcess?: typeof spawnOwnedProviderProcess;
@@ -144,6 +145,9 @@ export class GhidraHeadlessLauncher implements GhidraLauncher {
         ...(this.options.dosCom === undefined
           ? {}
           : { dosCom: this.options.dosCom }),
+        ...(this.options.xtensa === undefined
+          ? {}
+          : { xtensa: this.options.xtensa }),
         ...(this.options.dosMz === undefined
           ? {}
           : { dosMz: this.options.dosMz }),
@@ -368,6 +372,7 @@ export interface GhidraHeadlessArgumentOptions {
   readonly scriptLogPath: string;
   readonly dosMz?: true;
   readonly dosCom?: true;
+  readonly xtensa?: true;
 }
 
 /** Build the complete read-only headless invocation in deterministic order. */
@@ -404,7 +409,16 @@ export const ghidraHeadlessArguments = (
             "-cspec",
             "default",
           ]
-        : []),
+        : options.xtensa === true
+          ? [
+              "-loader",
+              "ElfLoader",
+              "-processor",
+              "Xtensa:LE:32:default",
+              "-cspec",
+              "default",
+            ]
+          : []),
     "-readOnly",
     "-deleteProject",
     "-log",

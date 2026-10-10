@@ -110,12 +110,12 @@ export const hopperLoaderArgsForTarget = (
   if (target.kind !== "executable")
     return err(new ProviderAdapterError("hopper", "resolve_analysis_profile"));
   const architecture = target.architecture;
-  if (architecture === "mips")
+  if (architecture === "mips" || architecture === "xtensa")
     return err(
       new AnalysisCapabilityUnavailableError(
         "hopper",
         "resolve_analysis_profile",
-        "REA's Hopper adapter does not admit MIPS targets. Select a verified Ghidra MIPS profile instead.",
+        "REA's Hopper adapter does not admit MIPS or Xtensa targets. Select the matching verified Ghidra profile instead.",
       ),
     );
   const flag = hopperArchitectureFlag(architecture);
@@ -147,7 +147,7 @@ export const hopperLoaderArgsForTarget = (
 };
 
 const hopperArchitectureFlag = (
-  architecture: Exclude<BinaryArchitecture, "mips">,
+  architecture: Exclude<BinaryArchitecture, "mips" | "xtensa">,
 ): string => {
   switch (architecture) {
     case "x86":

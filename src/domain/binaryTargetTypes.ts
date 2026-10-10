@@ -5,6 +5,7 @@ export const BINARY_ARCHITECTURES = [
   "arm",
   "arm64",
   "mips",
+  "xtensa",
 ] as const;
 export type BinaryArchitecture = (typeof BINARY_ARCHITECTURES)[number];
 
@@ -16,6 +17,14 @@ export interface MipsElfMetadata {
   readonly flags: number;
   /** Undefined until inspected; null means neither typed table has a record. */
   readonly abiFlags?: MipsAbiFlags | null;
+}
+
+/** Source ELF declarations; recognition does not establish Xtensa ISA/ABI fidelity. */
+export interface XtensaElfMetadata {
+  readonly elfClass: 32 | 64;
+  readonly byteOrder: "little" | "big";
+  readonly type: number;
+  readonly flags: number;
 }
 
 /** Declared fields of the 24-byte MIPS ABI flags record, not inferred semantics. */
@@ -50,10 +59,10 @@ type NonExecutableMetadata = {
 
 type ExecutableTarget = BinaryTargetIdentity & {
   readonly kind: "executable";
-  readonly architecture: Exclude<BinaryArchitecture, "mips">;
+  readonly architecture: Exclude<BinaryArchitecture, "mips" | "xtensa">;
   readonly availableArchitectures: readonly Exclude<
     BinaryArchitecture,
-    "mips"
+    "mips" | "xtensa"
   >[];
 };
 
@@ -62,6 +71,15 @@ type ExecutableTarget = BinaryTargetIdentity & {
  * Each variant carries only metadata established for that exact file kind.
  */
 export type BinaryTarget =
+  | (BinaryTargetIdentity & {
+      readonly kind: "executable";
+      readonly format: "elf";
+      readonly architecture: "xtensa";
+      readonly availableArchitectures: readonly "xtensa"[];
+      readonly xtensa: XtensaElfMetadata;
+      readonly executableRole?: never;
+      readonly managed?: never;
+    })
   | (BinaryTargetIdentity & {
       readonly kind: "executable";
       readonly format: "elf";

@@ -30,6 +30,7 @@ import {
   type GhidraInstallationInspection,
 } from "./GhidraInstallation.js";
 import { resolveGhidraAnalysisProfile } from "./GhidraAnalysisProfile.js";
+import { ghidraXtensaUnsupportedReason } from "./GhidraXtensaProfile.js";
 import { ghidraMipsUnsupportedReason } from "./GhidraMipsProfile.js";
 import { resolveGhidraExtensions } from "./extensions/GhidraExtensions.js";
 import {
@@ -54,6 +55,7 @@ const SUPPORTED_ARCHITECTURES = new Set([
   "arm",
   "arm64",
   "mips",
+  "xtensa",
 ]);
 
 /** Ghidra candidate backed by an isolated ephemeral headless import. */
@@ -142,7 +144,9 @@ export class GhidraProvider implements AnalysisProviderCandidate {
       };
     if (hostPlatform === "win32")
       return inspectWindowsP0TargetSupport(target, diagnostics);
-    const mipsReason = ghidraMipsUnsupportedReason(target);
+    const mipsReason =
+      ghidraMipsUnsupportedReason(target) ??
+      ghidraXtensaUnsupportedReason(target);
     if (mipsReason !== null)
       return {
         status: "unsupported",
@@ -163,7 +167,7 @@ export class GhidraProvider implements AnalysisProviderCandidate {
         status: "unsupported",
         code: "architecture_unsupported",
         reason:
-          "Ghidra v1 requires a supported x86, x86_64, arm, arm64, or MIPS target profile.",
+          "Ghidra v1 requires a supported x86, x86_64, arm, arm64, MIPS, or Xtensa target profile.",
         diagnostics,
       };
     return {

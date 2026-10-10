@@ -116,11 +116,11 @@ export class HopperProvider implements AnalysisProviderCandidate {
         reason: null,
         diagnostics,
       };
-    if (target.architecture === "mips")
+    if (target.architecture === "mips" || target.architecture === "xtensa")
       return {
         status: "unsupported",
         code: "architecture_unsupported",
-        reason: "REA's Hopper adapter does not admit MIPS targets.",
+        reason: "REA's Hopper adapter does not admit MIPS or Xtensa targets.",
         diagnostics,
       };
     if (target.format === "dos-mz" || target.format === "dos-com")

@@ -17,6 +17,11 @@ import {
   ghidraMipsUnsupportedReason,
 } from "./GhidraMipsProfile.js";
 
+import {
+  ghidraXtensaUnsupportedReason,
+  ghidraXtensaProfileParameters,
+} from "./GhidraXtensaProfile.js";
+
 /** Resolve version-bound, deterministic semantics before Ghidra imports a target. */
 export const resolveGhidraAnalysisProfile = (
   target: BinaryTarget,
@@ -32,7 +37,9 @@ export const resolveGhidraAnalysisProfile = (
     return Promise.resolve(
       err(new ProviderAdapterError(identity.id, "resolve_analysis_profile")),
     );
-  const mipsReason = ghidraMipsUnsupportedReason(target);
+  const mipsReason =
+    ghidraMipsUnsupportedReason(target) ??
+    ghidraXtensaUnsupportedReason(target);
   if (mipsReason !== null)
     return Promise.resolve(
       err(
@@ -109,6 +116,7 @@ export const resolveGhidraAnalysisProfile = (
           : {}),
         analyzer_preset: "ghidra-default",
         ...ghidraMipsProfileParameters(target),
+        ...ghidraXtensaProfileParameters(target),
       }),
     }),
   );
